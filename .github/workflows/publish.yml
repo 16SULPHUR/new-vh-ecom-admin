@@ -3,7 +3,7 @@ name: NEW VH ADMIN Generate a build and push to another branch
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
         run: git config pull.ff only
 
       - name: Pull latest changes
-        run: git pull origin master
+        run: git pull origin main
 
       - name: Install all dependencies
         run: npm install
