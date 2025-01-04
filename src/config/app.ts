@@ -11,13 +11,13 @@ interface AppConfig {
 }
 
 export const appConfig: AppConfig = {
-    name: "Sample App",
+    name: "VARIETY HEAVEN",
     github: {
-        title: "React Shadcn Starter",
-        url: "https://github.com/hayyi2/react-shadcn-starter",
+        title: "VH EC0M ADMIN",
+        url: "https://github.com/16SULPHUR/new-vh-ecom-admin",
     },
     author: {
-        name: "hayyi",
-        url: "https://github.com/hayyi2/",
+        name: "16SULPHUR",
+        url: "https://github.com/16SULPHUR",
     }
 }
