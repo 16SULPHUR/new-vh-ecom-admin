@@ -34,6 +34,13 @@ export interface Database {
                     name: string
                     description: string | null
                     price: number
+                    sku: string | null
+                    pattern: string | null
+                    occasion: string | null
+                    fabric: string | null
+                    net_quantity: number | null
+                    wash_care_instructions: string | null
+                    dimensions: string | null
                     created_at: string
                 }
                 Insert: {
@@ -42,6 +49,13 @@ export interface Database {
                     name: string
                     description?: string | null
                     price: number
+                    sku?: string | null
+                    pattern?: string | null
+                    occasion?: string | null
+                    fabric?: string | null
+                    net_quantity?: number | null
+                    wash_care_instructions?: string | null
+                    dimensions?: string | null
                     created_at?: string
                 }
                 Update: {
@@ -50,6 +64,13 @@ export interface Database {
                     name?: string
                     description?: string | null
                     price?: number
+                    sku?: string | null
+                    pattern?: string | null
+                    occasion?: string | null
+                    fabric?: string | null
+                    net_quantity?: number | null
+                    wash_care_instructions?: string | null
+                    dimensions?: string | null
                     created_at?: string
                 }
             }
@@ -107,7 +128,43 @@ export interface Database {
                     created_at?: string
                 }
             }
+            collections: {
+                Row: {
+                    id: number
+                    name: string
+                    created_at: string
+                }
+                Insert: {
+                    id?: number
+                    name: string
+                    created_at?: string
+                }
+                Update: {
+                    id?: number
+                    name?: string
+                    created_at?: string
+                }
+            }
+            collection_products: {
+                Row: {
+                    id: number
+                    collection_id: number // Foreign key referencing collections.id
+                    product_id: number // Foreign key referencing products.id
+                    created_at: string
+                }
+                Insert: {
+                    id?: number
+                    collection_id: number
+                    product_id: number
+                    created_at?: string
+                }
+                Update: {
+                    id?: number
+                    collection_id?: number
+                    product_id?: number
+                    created_at?: string
+                }
+            }
         }
     }
 }
-

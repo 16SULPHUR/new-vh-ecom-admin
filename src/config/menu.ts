@@ -40,6 +40,10 @@ export const mainMenu: NavItemWithChildren[] = [
         title: 'Images',
         to: '/images',
     },
+    {
+        title: 'Collections',
+        to: '/collections',
+    },
 ]
 
 export const sideMenu: NavItemWithChildren[] = []

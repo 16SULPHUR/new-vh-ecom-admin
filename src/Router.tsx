@@ -8,6 +8,7 @@ import Categories from "./pages/Categories";
 import Images from "./pages/Images";
 import Products from "./pages/Products";
 import Variations from "./pages/Variations";
+import Collections from "./pages/Collections";
 
 export const router = createBrowserRouter([
     {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
             {
                 path: "images",
                 element: <Images />,
+            },
+            {
+                path: "collections",
+                element: <Collections />,
             },
         ],
     },

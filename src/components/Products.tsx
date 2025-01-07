@@ -3,26 +3,51 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Database } from '@/lib/database.types'
 import { useToast } from '@/hooks/use-toast'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { ProductForm } from './productForm'
 
-type Product = Database['public']['Tables']['products']['Row']
-type Category = Database['public']['Tables']['categories']['Row']
+type Product = {
+  id: number;
+  category_id: number;
+  name: string;
+  description: string | "";
+  price: number;
+  sku: string | null;
+  pattern: string | null;
+  occasion: string | null;
+  fabric: string | null;
+  net_quantity: number;
+  wash_care_instruction: string | null;
+  dimensions: string | null;
+  created_at: string;
+  categories?: { id: number; name: string };
+};
+
+type Category = {
+  id: number;
+  name: string;
+};
 
 export function Products() {
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
-  const [newProduct, setNewProduct] = useState<Omit<Product, 'id' | 'created_at'>>({
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [newProduct, setNewProduct] = useState<Partial<Product>>({
     category_id: 0,
     name: '',
     description: '',
     price: 0,
+    sku: '',
+    pattern: '',
+    occasion: '',
+    fabric: '',
+    net_quantity: 1,
+    wash_care_instruction: '',
+    dimensions: '',
   })
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const { toast } = useToast();
+  const { toast } = useToast()
 
   useEffect(() => {
     fetchProducts()
@@ -82,6 +107,13 @@ export function Products() {
         name: '',
         description: '',
         price: 0,
+        sku: '',
+        pattern: '',
+        occasion: '',
+        fabric: '',
+        net_quantity: 1,
+        wash_care_instruction: '',
+        dimensions: '',
       })
       toast({
         title: "Product created",
@@ -91,7 +123,7 @@ export function Products() {
   }
 
   async function updateProduct(id: number, updatedProduct: Partial<Product>) {
-    const { id: _, categories, ...updateData } = updatedProduct;
+    const { id: _, categories, created_at, ...updateData } = updatedProduct
     const { error } = await supabase
       .from('products')
       .update(updateData)
@@ -137,47 +169,33 @@ export function Products() {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Products</h2>
-      <div className="grid grid-cols-2 gap-4">
-        <Select
-          value={newProduct.category_id.toString()}
-          onValueChange={(value) => setNewProduct({ ...newProduct, category_id: parseInt(value) })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.id.toString()}>
-                {category.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Input
-          placeholder="Product name"
-          value={newProduct.name}
-          onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-        />
-        <Input
-          placeholder="Description"
-          value={newProduct.description || ''}
-          onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-        />
-        <Input
-          type="number"
-          placeholder="Price"
-          value={newProduct.price}
-          onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
-        />
-      </div>
-      <Button onClick={createProduct}>Add Product</Button>
+      
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Add New Product</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Product</DialogTitle>
+          </DialogHeader>
+          <ProductForm
+            mode="create"
+            product={newProduct as Product}
+            categories={categories}
+            onProductChange={(field, value) => setNewProduct({ ...newProduct, [field]: value })}
+          />
+          <Button onClick={createProduct}>Add Product</Button>
+        </DialogContent>
+      </Dialog>
+
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Description</TableHead>
+            <TableHead>SKU</TableHead>
             <TableHead>Price</TableHead>
+            <TableHead>Fabric</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -186,58 +204,33 @@ export function Products() {
             <TableRow key={product.id}>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.categories?.name || 'N/A'}</TableCell>
-              <TableCell>{product.description}</TableCell>
+              <TableCell>{product.sku || 'N/A'}</TableCell>
               <TableCell>${product.price.toFixed(2)}</TableCell>
-              <TableCell>
-                <Button onClick={() => setEditingProduct(product)}>Edit</Button>
+              <TableCell>{product.fabric || 'N/A'}</TableCell>
+              <TableCell className="space-x-2">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button>Edit</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Edit Product</DialogTitle>
+                    </DialogHeader>
+                    <ProductForm
+                      mode="edit"
+                      product={product}
+                      categories={categories}
+                      onProductChange={(field, value) => setEditingProduct({ ...product, [field]: value } as Product)}
+                    />
+                    <Button onClick={() => updateProduct(product.id, product)}>Save Changes</Button>
+                  </DialogContent>
+                </Dialog>
                 <Button variant="destructive" onClick={() => deleteProduct(product.id)}>Delete</Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {editingProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-primary-foreground p-4 rounded-lg space-y-4">
-            <h3 className="text-lg font-bold">Edit Product</h3>
-            <Select
-              value={editingProduct.category_id.toString()}
-              onValueChange={(value) => setEditingProduct({ ...editingProduct, category_id: parseInt(value) })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id.toString()}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Input
-              placeholder="Product name"
-              value={editingProduct.name}
-              onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
-            />
-            <Input
-              placeholder="Description"
-              value={editingProduct.description || ''}
-              onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
-            />
-            <Input
-              type="number"
-              placeholder="Price"
-              value={editingProduct.price}
-              onChange={(e) => setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) })}
-            />
-            <div className="flex justify-end space-x-2">
-              <Button onClick={() => setEditingProduct(null)}>Cancel</Button>
-              <Button onClick={() => updateProduct(editingProduct.id, editingProduct)}>Save</Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
