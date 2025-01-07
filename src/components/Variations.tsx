@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast'
 
 type Variation = Database['public']['Tables']['variations']['Row']
 type Product = Database['public']['Tables']['products']['Row']
+type Color = { name: string; hex_code: string } // Assuming the colors table has these columns.
 
 interface VariationWithProduct extends Variation {
   product: Product | null
@@ -18,7 +19,9 @@ interface VariationWithProduct extends Variation {
 
 export function Variations() {
   const [variations, setVariations] = useState<VariationWithProduct[]>([])
+  const [sizes, setSizes] = useState<string[]>([]);
   const [products, setProducts] = useState<Product[]>([])
+  const [colors, setColors] = useState<Color[]>([]) // State for colors
   const [newVariation, setNewVariation] = useState<Omit<Variation, 'id' | 'created_at'>>({
     product_id: 0,
     color: '',
@@ -31,7 +34,26 @@ export function Variations() {
   useEffect(() => {
     fetchVariations()
     fetchProducts()
+    fetchColors() // Fetch colors on load
+    fetchSizes()
   }, [])
+
+  async function fetchSizes() {
+    const { data, error } = await supabase
+      .from('sizes')
+      .select('*')
+      .order('name');
+
+    if (error) {
+      toast({
+        title: "Error fetching sizes",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      setSizes(data?.map(size => size.name) || []);
+    }
+  }
 
   async function fetchVariations() {
     const { data, error } = await supabase
@@ -40,11 +62,12 @@ export function Variations() {
         *,
         product:product_id(
           id,
-          name
+          name,
+          sku
         )
       `)
       .order('id')
-    
+
     if (error) {
       toast({
         title: "Error fetching variations",
@@ -61,7 +84,7 @@ export function Variations() {
       .from('products')
       .select('*')
       .order('name')
-    
+
     if (error) {
       toast({
         title: "Error fetching products",
@@ -70,6 +93,44 @@ export function Variations() {
       })
     } else {
       setProducts(data || [])
+    }
+  }
+
+  async function deleteVariation(id: number) {
+    const { error } = await supabase
+      .from('variations')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      toast({
+        title: "Error deleting variation",
+        description: error.message,
+        variant: "destructive",
+      })
+    } else {
+      setVariations(variations.filter(v => v.id !== id))
+      toast({
+        title: "Variation deleted",
+        description: "The variation has been deleted successfully.",
+      })
+    }
+  }
+
+  async function fetchColors() {
+    const { data, error } = await supabase
+      .from('colors')
+      .select('*')
+      .order('name')
+
+    if (error) {
+      toast({
+        title: "Error fetching colors",
+        description: error.message,
+        variant: "destructive",
+      })
+    } else {
+      setColors(data || [])
     }
   }
 
@@ -100,51 +161,6 @@ export function Variations() {
     }
   }
 
-  async function updateVariation(id: number, variation: VariationWithProduct) {
-    const { id: _, product, created_at, ...updateData } = variation
-    
-    const { error } = await supabase
-      .from('variations')
-      .update(updateData)
-      .eq('id', id)
-
-    if (error) {
-      toast({
-        title: "Error updating variation",
-        description: error.message,
-        variant: "destructive",
-      })
-    } else {
-      await fetchVariations()
-      setEditingVariation(null)
-      toast({
-        title: "Variation updated",
-        description: "The variation has been updated successfully.",
-      })
-    }
-  }
-
-  async function deleteVariation(id: number) {
-    const { error } = await supabase
-      .from('variations')
-      .delete()
-      .eq('id', id)
-
-    if (error) {
-      toast({
-        title: "Error deleting variation",
-        description: error.message,
-        variant: "destructive",
-      })
-    } else {
-      setVariations(variations.filter(v => v.id !== id))
-      toast({
-        title: "Variation deleted",
-        description: "The variation has been deleted successfully.",
-      })
-    }
-  }
-
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Variations</h2>
@@ -159,21 +175,41 @@ export function Variations() {
           <SelectContent>
             {products.map((product) => (
               <SelectItem key={product.id} value={product.id.toString()}>
-                {product.name}
+                {product.sku}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Input
-          placeholder="Color"
-          value={newVariation.color || ''}
-          onChange={(e) => setNewVariation({ ...newVariation, color: e.target.value })}
-        />
-        <Input
-          placeholder="Size"
-          value={newVariation.size || ''}
-          onChange={(e) => setNewVariation({ ...newVariation, size: e.target.value })}
-        />
+        <Select
+          onValueChange={(value) => setNewVariation({ ...newVariation, color: value })}
+          value={newVariation.color || ""}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Color" />
+          </SelectTrigger>
+          <SelectContent>
+            {colors.map((color) => (
+              <SelectItem key={color.name} value={color.name}>
+                {color.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          onValueChange={(value) => setNewVariation({ ...newVariation, size: value })}
+          value={newVariation.size || ""}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Size" />
+          </SelectTrigger>
+          <SelectContent>
+            {sizes.map((size) => (
+              <SelectItem key={size} value={size}>
+                {size}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Input
           type="number"
           placeholder="Stock"
@@ -195,7 +231,7 @@ export function Variations() {
         <TableBody>
           {variations.map((variation) => (
             <TableRow key={variation.id}>
-              <TableCell>{variation.product?.name || 'N/A'}</TableCell>
+              <TableCell>{variation.product?.sku || 'N/A'}</TableCell>
               <TableCell>{variation.color || 'N/A'}</TableCell>
               <TableCell>{variation.size || 'N/A'}</TableCell>
               <TableCell>{variation.stock}</TableCell>
@@ -207,48 +243,6 @@ export function Variations() {
           ))}
         </TableBody>
       </Table>
-      {editingVariation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className=" bg-primary-foreground p-4 rounded-lg space-y-4">
-            <h3 className="text-lg font-bold">Edit Variation</h3>
-            <Select
-              value={editingVariation.product_id.toString()}
-              onValueChange={(value) => setEditingVariation({ ...editingVariation, product_id: parseInt(value) })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select product" />
-              </SelectTrigger>
-              <SelectContent>
-                {products.map((product) => (
-                  <SelectItem key={product.id} value={product.id.toString()}>
-                    {product.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Input
-              placeholder="Color"
-              value={editingVariation.color || ''}
-              onChange={(e) => setEditingVariation({ ...editingVariation, color: e.target.value })}
-            />
-            <Input
-              placeholder="Size"
-              value={editingVariation.size || ''}
-              onChange={(e) => setEditingVariation({ ...editingVariation, size: e.target.value })}
-            />
-            <Input
-              type="number"
-              placeholder="Stock"
-              value={editingVariation.stock}
-              onChange={(e) => setEditingVariation({ ...editingVariation, stock: parseInt(e.target.value) })}
-            />
-            <div className="flex justify-end space-x-2">
-              <Button onClick={() => setEditingVariation(null)}>Cancel</Button>
-              <Button onClick={() => updateVariation(editingVariation.id, editingVariation)}>Save</Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

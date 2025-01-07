@@ -3,13 +3,13 @@ import { createBrowserRouter } from "react-router-dom";
 import { Applayout } from "./components/layouts/AppLayout";
 
 import NoMatch from "./pages/NoMatch";
-import Dashboard from "./pages/Dashboard";
 import Categories from "./pages/Categories";
 import Images from "./pages/Images";
 import Products from "./pages/Products";
 import Variations from "./pages/Variations";
 import Collections from "./pages/Collections";
 import { AddProducts } from "./pages/AddProduct";
+import { ProductDashboard } from "./pages/Dashboard";
 
 export const router = createBrowserRouter([
     {
@@ -18,7 +18,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: "",
-                element: <Dashboard />,
+                element: <ProductDashboard />,
             },
             {
                 path: "products",

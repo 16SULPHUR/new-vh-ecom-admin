@@ -17,7 +17,7 @@ interface Collection {
 
 interface Product {
   id: number
-  name: string
+  sku:string
 }
 
 interface CollectionWithProducts extends Collection {
@@ -64,7 +64,7 @@ export function Collections() {
   async function fetchProducts() {
     const { data, error } = await supabase
       .from('products')
-      .select('id, name')
+      .select('id, sku')
       .order('name')
 
     if (error) {
@@ -248,7 +248,7 @@ export function Collections() {
                     }
                   }}
                 />
-                <label htmlFor={`new-product-${product.id}`}>{product.name}</label>
+                <label htmlFor={`new-product-${product.id}`}>{product.sku}</label>
               </div>
             ))}
           </div>
@@ -316,7 +316,7 @@ export function Collections() {
                         }
                       }}
                     />
-                    <label htmlFor={`edit-product-${product.id}`}>{product.name}</label>
+                    <label htmlFor={`edit-product-${product.id}`}>{product.sku}</label>
                   </div>
                 ))}
               </div>

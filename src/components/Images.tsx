@@ -522,6 +522,7 @@ interface UploadedImage {
 interface Product {
   id: number
   name: string
+  sku:string
 }
 
 interface Variation {
@@ -907,7 +908,7 @@ export default function Images() {
             <SelectItem value="null">Select a product</SelectItem>
             {products.map((product) => (
               <SelectItem key={product.id} value={product.id.toString()}>
-                {product.name}
+                {product.sku}
               </SelectItem>
             ))}
           </SelectContent>
@@ -997,7 +998,6 @@ export default function Images() {
         </ul>
       </div>
 
-      {/* Preview section */}
       {images.length > 0 && (
         <div className="rounded-lg border p-4 space-y-4">
           <h3 className="font-medium">Current Images:</h3>
