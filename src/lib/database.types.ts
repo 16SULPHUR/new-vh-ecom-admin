@@ -39,7 +39,7 @@ export interface Database {
                     occasion: string | null
                     fabric: string | null
                     net_quantity: number | null
-                    wash_care_instructions: string | null
+                    wash_care_instruction: string | null
                     dimensions: string | null
                     created_at: string
                 }

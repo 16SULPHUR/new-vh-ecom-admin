@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useToast } from '@/hooks/use-toast'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ProductForm } from './productForm'
+import { Link } from 'react-router-dom'
 
 type Product = {
   id: number;
@@ -170,23 +171,9 @@ export function Products() {
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Products</h2>
       
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button>Add New Product</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New Product</DialogTitle>
-          </DialogHeader>
-          <ProductForm
-            mode="create"
-            product={newProduct as Product}
-            categories={categories}
-            onProductChange={(field, value) => setNewProduct({ ...newProduct, [field]: value })}
-          />
-          <Button onClick={createProduct}>Add Product</Button>
-        </DialogContent>
-      </Dialog>
+          <Button>
+            <Link to={"/add-product"}>Add New Product</Link>
+          </Button>
 
       <Table>
         <TableHeader>

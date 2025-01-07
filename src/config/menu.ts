@@ -20,6 +20,10 @@ export const mainMenu: NavItemWithChildren[] = [
         to: '/',
     },
     {
+        title: 'Categories',
+        to: '/categories',
+    },
+    {
         title: 'Products',
         items: [
             {
@@ -27,8 +31,8 @@ export const mainMenu: NavItemWithChildren[] = [
                 to: '/products',
             },
             {
-                title: 'Categories',
-                to: '/categories',
+                title: 'Add Product',
+                to: '/add-product',
             },
         ]
     },
