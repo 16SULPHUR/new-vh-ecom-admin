@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ProductForm } from './productForm'
 import { Link } from 'react-router-dom'
 
-type Product = {
+export type Product = {
   id: number;
   category_id: number;
   name: string;
@@ -24,9 +24,10 @@ type Product = {
   dimensions: string | null;
   created_at: string;
   categories?: { id: number; name: string };
+  shipping_duration: number | 2
 };
 
-type Category = {
+export type Category = {
   id: number;
   name: string;
 };
@@ -47,6 +48,7 @@ export function Products() {
     net_quantity: 1,
     wash_care_instruction: '',
     dimensions: '',
+    shipping_duration: 2
   })
   const { toast } = useToast()
 
@@ -60,7 +62,7 @@ export function Products() {
       .from('products')
       .select('*, categories(id, name)')
       .order('name')
-    
+
     if (error) {
       toast({
         title: "Error fetching products",
@@ -77,7 +79,7 @@ export function Products() {
       .from('categories')
       .select('*')
       .order('name')
-    
+
     if (error) {
       toast({
         title: "Error fetching categories",
@@ -115,6 +117,7 @@ export function Products() {
         net_quantity: 1,
         wash_care_instruction: '',
         dimensions: '',
+        shipping_duration: 2
       })
       toast({
         title: "Product created",
@@ -170,10 +173,10 @@ export function Products() {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Products</h2>
-      
-          <Button>
-            <Link to={"/add-product"}>Add New Product</Link>
-          </Button>
+
+      <Button>
+        <Link to={"/add-product"}>Add New Product</Link>
+      </Button>
 
       <Table>
         <TableHeader>
@@ -195,24 +198,12 @@ export function Products() {
               <TableCell>${product.price.toFixed(2)}</TableCell>
               <TableCell>{product.fabric || 'N/A'}</TableCell>
               <TableCell className="space-x-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>Edit</Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Edit Product</DialogTitle>
-                    </DialogHeader>
-                    <ProductForm
-                      mode="edit"
-                      product={product}
-                      categories={categories}
-                      onProductChange={(field, value) => setEditingProduct({ ...product, [field]: value } as Product)}
-                    />
-                    <Button onClick={() => updateProduct(product.id, product)}>Save Changes</Button>
-                  </DialogContent>
-                </Dialog>
-                <Button variant="destructive" onClick={() => deleteProduct(product.id)}>Delete</Button>
+                <Link to={`/edit-product/${product.id}`}>
+                  <Button>Edit</Button>
+                </Link>
+                <Button variant="destructive" onClick={() => deleteProduct(product.id)}>
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))}

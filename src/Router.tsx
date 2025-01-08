@@ -10,6 +10,7 @@ import Variations from "./pages/Variations";
 import Collections from "./pages/Collections";
 import { AddProducts } from "./pages/AddProduct";
 import { ProductDashboard } from "./pages/Dashboard";
+import { EditProduct } from "./components/EditProduct";
 
 export const router = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
             {
                 path: "add-product",
                 element: <AddProducts />,
+            },
+            {
+                path: "/edit-product/:id",
+                element: <EditProduct />,
             },
             {
                 path: "categories",
