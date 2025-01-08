@@ -21,6 +21,7 @@ type Product = {
     net_quantity: number;
     wash_care_instruction: string | null;
     dimensions: string | null;
+    shipping_duration: number
 };
 
 type Category = {
@@ -123,7 +124,7 @@ export function ProductForm({ mode, product, categories, onProductChange }: Prod
                 </CardContent>
             </Card>
             <Card>
-            <CardHeader className='text-2xl font-bold'>Details</CardHeader>
+                <CardHeader className='text-2xl font-bold'>Details</CardHeader>
                 <CardContent className="space-y-4 pt-4">
                     <div className="grid grid-cols-1">
                         <div className="space-y-2">
@@ -151,6 +152,10 @@ export function ProductForm({ mode, product, categories, onProductChange }: Prod
                                     onChange={(e) => onProductChange('pattern', e.target.value)}
                                 />
                             )}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="pattern">Shipping Duration</Label>
+                            <Input type='number' value={product?.shipping_duration || 2} onChange={(e) => onProductChange("shipping_duration", e.target.value)} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="occasion">Occasion</Label>

@@ -23,6 +23,7 @@ type Product = {
     dimensions: string | null;
     created_at: string;
     categories?: { id: number; name: string };
+    shipping_duration: number
 };
 
 type Category = {
@@ -46,6 +47,7 @@ export function AddProducts() {
         net_quantity: 1,
         wash_care_instruction: '',
         dimensions: '',
+        shipping_duration:2
     })
     const { toast } = useToast()
 
@@ -114,6 +116,7 @@ export function AddProducts() {
                 net_quantity: 1,
                 wash_care_instruction: '',
                 dimensions: '',
+                shipping_duration:2
             })
             toast({
                 title: "Product created",
