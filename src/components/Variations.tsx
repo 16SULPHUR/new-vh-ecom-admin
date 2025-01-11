@@ -381,6 +381,7 @@ export function Variations() {
     fetchVariations()
     fetchProducts()
     fetchColors()
+    fetchSizes()
   }, [])
 
   async function fetchColors() {
@@ -542,21 +543,53 @@ export function Variations() {
           <SelectContent>
             {products.map((product) => (
               <SelectItem key={product.id} value={product.id.toString()}>
-                {product.name}
+                {product.sku}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Input
+        {/* <Input
           placeholder="Color"
           value={newVariation.color || ''}
           onChange={(e) => setNewVariation({ ...newVariation, color: e.target.value })}
-        />
-        <Input
+        /> */}
+        <Select
+          value={newVariation.color || ""}
+          onValueChange={(value) => setNewVariation({ ...newVariation, color: value })}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Color" />
+          </SelectTrigger>
+          <SelectContent>
+            {colors.map((color) => (
+              <SelectItem key={color.name} value={color.name}>
+                {color.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {/* <Input
           placeholder="Size"
           value={newVariation.size || ''}
           onChange={(e) => setNewVariation({ ...newVariation, size: e.target.value })}
-        />
+        /> */}
+
+
+        <Select
+          value={newVariation.size || ""}
+          onValueChange={(value) => setNewVariation({ ...newVariation, size: value })}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Size" />
+          </SelectTrigger>
+          <SelectContent>
+            {sizes.map((size) => (
+              <SelectItem key={size} value={size}>
+                {size}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Input
           type="number"
           placeholder="Stock"
