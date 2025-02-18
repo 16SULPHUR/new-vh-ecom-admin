@@ -90,7 +90,7 @@ export function ProductDashboard() {
                                     </CollapsibleTrigger>
                                 </div>
                                 <div className="flex-1 min-w-[200px] font-medium">{product.name}</div>
-                                <div className="w-24 text-left">{product.sku}</div>
+                                <div className="w-24 text-left">{product.id}</div>
                                 <div className="w-24 text-left">${product.price.toFixed(2)}</div>
                                 <div className="w-32 text-left">{product.pattern}</div>
                                 <div className="w-32 text-left">{product.fabric}</div>
@@ -110,7 +110,7 @@ export function ProductDashboard() {
                                             >
                                                 <div className="flex justify-between w-full">
                                                     <span className="font-semibold">
-                                                        {variation.color} - {variation.size}
+                                                        {product.id}-{variation.id} ({variation.color} - {variation.size})
                                                     </span>
                                                     <span className="text-muted-foreground">
                                                         Stock: {variation.stock}
