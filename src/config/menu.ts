@@ -31,6 +31,10 @@ export const mainMenu: NavItemWithChildren[] = [
                 to: '/products',
             },
             {
+                title: 'Listing Options',
+                to: '/listing-options',
+            },
+            {
                 title: 'Add Product',
                 to: '/add-product',
             },

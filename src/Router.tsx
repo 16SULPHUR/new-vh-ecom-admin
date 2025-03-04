@@ -11,6 +11,7 @@ import Collections from "./pages/Collections";
 import { AddProducts } from "./pages/AddProduct";
 import { ProductDashboard } from "./pages/Dashboard";
 import { EditProduct } from "./components/EditProduct";
+import ListingOptions from "./pages/ListingOptions";
 
 export const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
             {
                 path: "products",
                 element: <Products />,
+            },
+            {
+                path: "listing-options",
+                element: <ListingOptions />,
             },
             {
                 path: "add-product",

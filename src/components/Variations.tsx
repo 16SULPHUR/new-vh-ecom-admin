@@ -100,7 +100,7 @@ export function Variations() {
       .select('*')
       .order('id', { ascending: true })
 
-      console.log(data)
+    console.log(data)
 
     if (error) {
       toast({
@@ -212,8 +212,19 @@ export function Variations() {
           </SelectTrigger>
           <SelectContent>
             {colors.map((color) => (
-              <SelectItem key={color.name} value={color.name}>
-                {color.name}
+              <SelectItem key={color.name} value={color.name} className='w-full'>
+                <div className='flex justify-between w-full gap-5'>
+                  <span className={`h-5 w-10`} style={{
+                      backgroundColor: color.hex_code
+                    }}>
+
+                  </span>
+                  <span>
+
+                    {color.name}
+                  </span>
+
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
