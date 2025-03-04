@@ -23,6 +23,7 @@ export const mainMenu: NavItemWithChildren[] = [
         title: 'Categories',
         to: '/categories',
     },
+
     {
         title: 'Products',
         items: [
@@ -31,14 +32,14 @@ export const mainMenu: NavItemWithChildren[] = [
                 to: '/products',
             },
             {
-                title: 'Listing Options',
-                to: '/listing-options',
-            },
-            {
                 title: 'Add Product',
                 to: '/add-product',
             },
         ]
+    },
+    {
+        title: 'Listing Options',
+        to: '/listing-options',
     },
     {
         title: 'Variations',

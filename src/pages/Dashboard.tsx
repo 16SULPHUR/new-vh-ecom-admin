@@ -30,7 +30,7 @@ export function ProductDashboard() {
                         images (*)
                     )
                 `)
-                .order('created_at', { ascending: false })
+                .order('id', { ascending: false })
 
             if (error) throw error
             setProducts(products || [])
@@ -90,7 +90,7 @@ export function ProductDashboard() {
                                     </CollapsibleTrigger>
                                 </div>
                                 <div className="flex-1 min-w-[200px] font-medium">{product.name}</div>
-                                <div className="w-24 text-left">{product.id}</div>
+                                <div className="w-40 text-left">{product.id} ({product.sku})</div>
                                 <div className="w-24 text-left">${product.price.toFixed(2)}</div>
                                 <div className="w-32 text-left">{product.pattern}</div>
                                 <div className="w-32 text-left">{product.fabric}</div>

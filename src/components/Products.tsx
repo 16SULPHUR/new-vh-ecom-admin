@@ -61,7 +61,7 @@ export function Products() {
     const { data, error } = await supabase
       .from('products')
       .select('*, categories(id, name)')
-      .order('name')
+      .order('id', { ascending: false })
 
     if (error) {
       toast({
